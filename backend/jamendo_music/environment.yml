@@ -1,0 +1,13 @@
+name: jamendo-uploader
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - requests
+      - pymongo
+      - boto3
+      - tqdm
+      - python-dotenv
