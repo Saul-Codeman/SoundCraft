@@ -1,4 +1,4 @@
-function AudioUploader({ source, onAudioFileChange }) {
+function AudioUploader({ onAudioFileChange }) {
   return (
     <div className="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md flex flex-col items-center space-y-4">
       <h2 className="text-xl font-semibold text-gray-800">

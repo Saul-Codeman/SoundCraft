@@ -3,8 +3,16 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const env = require("dotenv");
 const path = require("path");
+const AWS = require("aws-sdk");
 
 env.config();
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
+const { AWS_BUCKET_NAME } = process.env;
+
 const app = express();
 const port = 3000;
 
@@ -26,18 +34,63 @@ mongoose
 
 app.get("/api/tracks", async (req, res) => {
   const searchQuery = req.query.search?.trim();
-  console.log(searchQuery);
   try {
     const collection = mongoose.connection.collection("tracks");
     const filter = searchQuery
       ? { name: { $regex: searchQuery, $options: "i" } }
       : {}; // empty query returns any 10 tracks
     const tracks = await collection.find(filter).limit(10).toArray();
-    console.log(tracks);
     res.json(tracks);
   } catch (err) {
     console.error("Error fetching tracks:", err);
     res.status(500).send("Error fetching tracks");
+  }
+});
+
+async function getTrack(trackId) {
+  try {
+    const collection = mongoose.connection.collection("tracks");
+    const track = await collection.findOne({ id: trackId });
+
+    if (!track) {
+      throw new Error(`Track with ID ${trackId} not found`);
+    }
+    return track;
+  } catch (err) {
+    console.error("Error fetching track:", err);
+    throw new Error(`Error fetching track ${trackId}`);
+  }
+}
+
+app.get("/api/tracks/downloads/:id", async (req, res) => {
+  const trackId = req.params.id;
+  if (!trackId) return res.status(400).send("Track ID is required");
+
+  try {
+    const track = await getTrack(trackId);
+
+    if (!track) {
+      return res.status(404).send(`Track with ID ${trackId} not found`);
+    }
+
+    const audioUrl = track.s3_audio_url;
+    console.log(audioUrl);
+    const s3Key = audioUrl.split("amazonaws.com/")[1];
+    console.log("Fetching S3 file with key:", s3Key);
+
+    const s3Params = {
+      Bucket: AWS_BUCKET_NAME,
+      Key: s3Key,
+    };
+
+    const s3Object = await s3.getObject(s3Params).promise();
+
+    res.set("Content-Type", "audio/mpeg");
+    res.set("Content-Disposition", "inline; filename=" + track.name);
+    res.send(s3Object.Body);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching track data");
   }
 });
 
