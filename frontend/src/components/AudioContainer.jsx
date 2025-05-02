@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AudioPlayer from "./AudioPlayer";
 import AudioUploader from "./AudioUploader";
-import SearchPreviews from "./SearchPreviews";
+import SearchTracks from "./SearchTracks";
 
 function AudioContainer() {
   const [audioFile, setAudioFile] = useState({ url: null, name: null });
@@ -10,7 +10,7 @@ function AudioContainer() {
     <div>
       <AudioPlayer source={audioFile.url} sourceName={audioFile.name} />
       <AudioUploader onAudioFileChange={setAudioFile} />
-      <SearchPreviews onAudioFileChange={setAudioFile} />
+      <SearchTracks onAudioFileChange={setAudioFile} />
     </div>
   );
 }

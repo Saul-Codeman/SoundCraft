@@ -14,12 +14,32 @@ const frontendPath = path.join(__dirname, "../frontend/dist");
 app.use(express.static(frontendPath));
 
 mongoose
-  .connect(process.env.MONGODB_URI, {
+  .connect(process.env.MONGODB_MUSIC_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("MongoDB connected"))
+  .then(() => {
+    const db = mongoose.connection.db;
+    console.log("Connected to MongoDB Database:", db.databaseName); // Check connected database
+  })
   .catch((err) => console.error("MongoDB connection error:", err));
+
+app.get("/api/tracks", async (req, res) => {
+  const searchQuery = req.query.search?.trim();
+  console.log(searchQuery);
+  try {
+    const collection = mongoose.connection.collection("tracks");
+    const filter = searchQuery
+      ? { name: { $regex: searchQuery, $options: "i" } }
+      : {}; // empty query returns any 10 tracks
+    const tracks = await collection.find(filter).limit(10).toArray();
+    console.log(tracks);
+    res.json(tracks);
+  } catch (err) {
+    console.error("Error fetching tracks:", err);
+    res.status(500).send("Error fetching tracks");
+  }
+});
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"), (err) => {
