@@ -27,7 +27,8 @@ client = MongoClient(MONGODB_URI)
 db = client[DB_NAME]
 collection = db[COLLECTION_NAME]
 
-MAX_WORKERS = 5
+MAX_WORKERS = 20
+downloads_failed = 0
 
 def process_track(track):
     track_id = track['id']
@@ -35,7 +36,8 @@ def process_track(track):
     audio_url = track.get('audiodownload')
 
     s3_url = download_and_upload_to_s3(audio_url, track_id, name) if audio_url else None
-
+    if not s3_url:
+        return
     condensed_track = {
         "id": track_id,
         "name": name,
@@ -61,11 +63,12 @@ def download_and_upload_to_s3(url, track_id, name):
     if response.status_code == 200:
         track_id = track_id.strip().replace('.', '')
         filename = f"tracks/{track_id}/{name}.mp3"
-        print(f"Uploading to S3 with key: {filename}")
         s3.upload_fileobj(response.raw, AWS_BUCKET_NAME, filename)
         return f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{filename}"
     else:
+        global downloads_failed
         print(f"Failed to download track {track_id}")
+        downloads_failed += 1
         return None
 
 def fetch_and_store_tracks(offset, limit):
@@ -88,11 +91,13 @@ def fetch_and_store_tracks(offset, limit):
             f.result()  # to raise exceptions if any
 
 def main():
-    total = 10
-    batch_size = 5
+    total = 30000
+    batch_size = 200
     for offset in tqdm(range(0, total, batch_size)):
         fetch_and_store_tracks(offset, batch_size)
+        print(f"Offset: {offset}")
         sleep(1) 
+    print(f"Downloads failed: {downloads_failed}")
 
 if __name__ == '__main__':
     main()
