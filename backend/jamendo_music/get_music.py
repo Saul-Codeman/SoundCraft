@@ -27,7 +27,7 @@ client = MongoClient(MONGODB_URI)
 db = client[DB_NAME]
 collection = db[COLLECTION_NAME]
 
-MAX_WORKERS = 20
+MAX_WORKERS = 40
 downloads_failed = 0
 
 def process_track(track):
@@ -91,9 +91,9 @@ def fetch_and_store_tracks(offset, limit):
             f.result()  # to raise exceptions if any
 
 def main():
-    total = 30000
+    total = 33000
     batch_size = 200
-    for offset in tqdm(range(0, total, batch_size)):
+    for offset in tqdm(range(30000, total, batch_size)):
         fetch_and_store_tracks(offset, batch_size)
         print(f"Offset: {offset}")
         sleep(1) 
