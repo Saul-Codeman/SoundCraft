@@ -10,7 +10,7 @@ function SearchTracks({ onAudioFileChange }) {
   const handleSearch = (trackName) => {
     setQuery(trackName);
     axios
-      .get(`http://localhost:3000/api/tracks?search=${query}`)
+      .get(`/api/tracks?search=${query}`)
       .then((res) => {
         setResults(res.data);
         setShowDropdown(true);
@@ -20,7 +20,7 @@ function SearchTracks({ onAudioFileChange }) {
 
   const handleSelect = (track) => {
     axios
-      .get(`http://localhost:3000/api/tracks/downloads/${track.id}`, {
+      .get(`/api/tracks/downloads/${track.id}`, {
         responseType: "arraybuffer",
       })
       .then((res) => {

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import WaveSurfer from "wavesurfer.js";
 import EQSliders from "./EQSliders";
+import EQProfileList from "./EQProfileList";
 
 const eqBands = [32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
 const eqBandNames = [
@@ -15,6 +16,22 @@ const eqBandNames = [
   "8KHz",
   "16KHz",
 ];
+const amplifyGains = (gains, factor = 1.3) => {
+  return gains.map((gain) => Math.min(Math.max(gain * factor, -40), 40)); // Clamps the gain between -40 and 40
+};
+// prettier-ignore
+const eqProfiles = {
+  "Flat": amplifyGains([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+  "Bass Boost": amplifyGains([6, 5, 4, 2, 1, 0, -1, -2, -2, -3]),
+  "Treble Boost": amplifyGains([-2, -2, -1, 0, 0, 1, 2, 4, 5, 6]),
+  "V-Shape": amplifyGains([4, 3, 1, -2, -3, -2, 1, 3, 4, 5]),
+  "Vocal Boost": amplifyGains([-2, -1, 0, 2, 3, 4, 3, 2, 0, -1]),
+  "Lounge": amplifyGains([3, 2, 1, 0, -1, 0, 1, 2, 3, 4]),
+  "Classical": amplifyGains([0, 0, 1, 2, 2, 2, 1, 1, 0, 0]),
+  "Pop": amplifyGains([-1, 1, 3, 4, 2, 0, 1, 3, 4, 5]),
+  "Rock": amplifyGains([4, 3, 2, 1, 0, 1, 2, 3, 2, 1]),
+  "Dance": amplifyGains([5, 4, 3, 1, 0, 1, 3, 4, 5, 6]),
+};
 // Link to WaveSurfer: https://wavesurfer.xyz/examples/?webaudio.js
 function AudioPlayer({ source, sourceName }) {
   const waveformRef = useRef(null);
@@ -79,23 +96,46 @@ function AudioPlayer({ source, sourceName }) {
     }
   };
 
+  const handleProfileChange = (profile) => {
+    const selectedProfile = eqProfiles[profile];
+    if (selectedProfile) {
+      setGains(selectedProfile);
+    }
+
+    selectedProfile.forEach((value, index) => {
+      if (filtersRef.current[index]) {
+        filtersRef.current[index].gain.value = value;
+      }
+    });
+  };
+
   return (
-    <div className="p-12 bg-zinc-900 text-white rounded-xl shadow-md max-w-3xl mx-auto mb-4">
-      <h2 className="text-2xl font-bold mb-4 text-cyan-400">
-        🎵 {playerTitle}
-      </h2>
-      <div ref={waveformRef}></div>
-      <div className="flex gap-2 justify-center">
-        {source && (
-          <EQSliders
-            eqBands={eqBands}
-            eqBandNames={eqBandNames}
-            gains={gains}
-            onGainChange={handleGainChange}
+    source && (
+      <div className="flex gap-4 max-w-6xl mx-auto">
+        <div className="flex-1 p-12 bg-zinc-900 text-white rounded-xl shadow-md mb-4">
+          <h2 className="text-2xl font-bold mb-4 text-cyan-400">
+            🎵 {playerTitle}
+          </h2>
+          <div ref={waveformRef}></div>
+          <div className="flex gap-2 justify-center">
+            {source && (
+              <EQSliders
+                eqBands={eqBands}
+                eqBandNames={eqBandNames}
+                gains={gains}
+                onGainChange={handleGainChange}
+              />
+            )}
+          </div>
+        </div>
+        <div className="w-[250px] p-6 bg-zinc-900 text-white rounded-xl shadow-md mb-4">
+          <EQProfileList
+            eqProfiles={eqProfiles}
+            handleProfileChange={handleProfileChange}
           />
-        )}
+        </div>
       </div>
-    </div>
+    )
   );
 }
 

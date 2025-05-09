@@ -1,6 +1,6 @@
 function Navbar() {
   return (
-    <nav className="bg-black text-softWhite px-4 py-3 flex justify-between items-center">
+    <nav className="-mt-4 mb-3 bg-zinc-900 rounded-xl text-softWhite px-4 py-3 flex justify-between items-center">
       <div className="text-xl font-bold text-orange">
         <a href="/">🎵</a>
       </div>
