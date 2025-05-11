@@ -20,4 +20,4 @@ COPY frontend ./frontend
 EXPOSE 3000
 
 # Start backend using nodemon for auto-reloading
-CMD ["npx", "nodemon", "backend/index.js"]
+CMD ["node", "backend/index.js"]

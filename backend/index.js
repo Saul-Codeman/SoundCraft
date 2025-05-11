@@ -74,9 +74,7 @@ app.get("/api/tracks/downloads/:id", async (req, res) => {
     }
 
     const audioUrl = track.s3_audio_url;
-    console.log(audioUrl);
     const s3Key = audioUrl.split("amazonaws.com/")[1];
-    console.log("Fetching S3 file with key:", s3Key);
 
     const s3Params = {
       Bucket: AWS_BUCKET_NAME,
