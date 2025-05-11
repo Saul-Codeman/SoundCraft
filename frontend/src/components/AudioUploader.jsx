@@ -1,9 +1,7 @@
 function AudioUploader({ onAudioFileChange }) {
   return (
-    <div className="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md flex flex-col items-center space-y-4">
-      <h2 className="text-xl font-semibold text-gray-800">
-        Upload an Audio File
-      </h2>
+    <div className="p-6 max-w-md mx-auto bg-zinc-900 rounded-xl shadow-md flex flex-col items-center space-y-4">
+      <h2 className="text-xl font-semibold text-white">Upload an Audio File</h2>
 
       <label className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow transition">
         Choose File
