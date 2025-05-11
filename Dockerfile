@@ -10,6 +10,7 @@ RUN cd backend && npm install
 
 # Copy frontend package files and install dependencies, then build frontend
 COPY frontend/package*.json ./frontend/
+RUN ls -alh /app/frontend
 RUN cd frontend && npm install && npm run build
 
 # Copy the full backend and frontend source code
