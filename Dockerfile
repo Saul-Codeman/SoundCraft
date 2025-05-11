@@ -4,18 +4,14 @@ FROM node:18
 # Set the working directory
 WORKDIR /app
 
-# Copy backend package files and install dependencies
-COPY backend/package*.json ./backend/
-RUN cd backend && npm install
-
-# Copy frontend package files and install dependencies, then build frontend
-COPY frontend/package*.json ./frontend/
-RUN ls -alh /app/frontend
-RUN cd frontend && npm install && npm run build
-
 # Copy the full backend and frontend source code
 COPY backend ./backend
 COPY frontend ./frontend
+
+RUN cd backend && npm install
+
+RUN ls -alh /app/frontend
+RUN cd frontend && npm install && npm run build
 
 # Expose backend port
 EXPOSE 3000
