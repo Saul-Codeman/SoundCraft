@@ -19,28 +19,28 @@ Tech Stack
 ## Setup & Installation
 
 ### 1. Clone the Repository
-git clone https://github.com/Saul-Codeman/SoundCraft.git
-cd SoundCraft
+- git clone https://github.com/Saul-Codeman/SoundCraft.git
+- cd SoundCraft
 
 ### 2. Create .env in Backend directory (may use local music files without .env)
-# MongoDB
-MONGODB_URI=
-MONGODB_MUSIC_URI=
-DB_NAME=
-COLLECTION_NAME=
-# Python music downloading script
-JAMENDO_CLIENT_ID=
-# AWS S3
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_BUCKET_NAME=
-AWS_REGION=
+#### MongoDB
+- MONGODB_URI=
+- MONGODB_MUSIC_URI=
+- DB_NAME=
+- COLLECTION_NAME=
+#### Python music downloading script
+- JAMENDO_CLIENT_ID=
+#### AWS S3
+- AWS_ACCESS_KEY_ID=
+- AWS_SECRET_ACCESS_KEY=
+- AWS_BUCKET_NAME=
+- AWS_REGION=
 
 ### 3. Install Node Modules
-cd backend && npm install
-cd frontend && npm install
+- cd backend && npm install
+- cd frontend && npm install
 
 ### 4. Run Locally
-cd backend && node index.js
-Go to localhost:3000
-Note: Search will retrieve song metadata, but you cannot download them because I didn't pay my AWS bill.
+- cd backend && node index.js
+- Go to localhost:3000
+- Note: Search will retrieve song metadata, but you cannot download them because I didn't pay my AWS bill.
